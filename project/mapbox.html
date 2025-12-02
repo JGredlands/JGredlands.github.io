@@ -20,6 +20,24 @@ const map = new mapboxgl.Map({
     zoom: 10
 });
 
+    map.on('load', function() {
+    console.log('=== ALL LAYERS IN YOUR STYLE ===');
+    const allLayers = map.getStyle().layers;
+    
+    allLayers.forEach(function(layer) {
+        console.log('ID: "' + layer.id + '" | Type: ' + layer.type + ' | Source: ' + layer.source);
+    });
+    
+    // Filter to show only your custom layers (not Mapbox base layers)
+    console.log('=== YOUR CUSTOM LAYERS ===');
+    const customLayers = allLayers.filter(function(layer) {
+        return layer.source && !layer.source.includes('mapbox://');
+    });
+    
+    customLayers.forEach(function(layer) {
+        console.log('Custom Layer ID: "' + layer.id + '"');
+    });
+});
     
     // TRANSIT ROUTES
     map.on('mousemove', ROUTES_LAYER, function(e) {
