@@ -22,7 +22,20 @@ const map = new mapboxgl.Map({
 
 // Wait for the map to load
 map.on('load', () => {
+    console.log('Map loaded successfully');
     
+    // Check if your layers exist
+    const style = map.getStyle();
+    console.log('All layers:', style.layers.map(layer => layer.id));
+    
+    // Check specific layers
+    const routesLayer = map.getLayer('jgobat13.dnaltwuu');
+    const stopsLayer = map.getLayer('jgobat13.3sdsuv44');
+    const polygonsLayer = map.getLayer('jgobat13.4fp8md9p');
+    
+    console.log('Routes layer exists:', !!routesLayer);
+    console.log('Stops layer exists:', !!stopsLayer);
+    console.log('Polygons layer exists:', !!polygonsLayer);
     // TRANSIT ROUTES - Hover popup
     map.on('mousemove', 'jgobat13.dnaltwuu', (e) => {
         map.getCanvas().style.cursor = 'pointer';
