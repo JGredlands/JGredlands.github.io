@@ -20,40 +20,6 @@ const map = new mapboxgl.Map({
     zoom: 10
 });
 
-map.on('load', function() {
-    const ROUTES_LAYER = 'TransitRoutes';
-    const STOPS_LAYER = 'TransitStops';
-    const POLYGONS_LAYER = 'CensusTracts';
-
-    map.on('click', function(e) {
-        const features = map.queryRenderedFeatures(e.point);
-        console.log('=== CLICKED FEATURES ===');
-        console.log('Number of features:', features.length);
-        if (features.length > 0) {
-            console.log('Top feature layer:', features[0].layer.id);
-            console.log('All layers at click point:', features.map(f => f.layer.id));
-        }
-    });
-    
-    // TEST - Click on specific layers
-    map.on('click', ROUTES_LAYER, function(e) {
-        console.log('TransitRoutes clicked!');
-        console.log('Properties:', e.features[0].properties);
-        alert('Route clicked! Check console for properties.');
-    });
-    
-    map.on('click', STOPS_LAYER, function(e) {
-        console.log('TransitStops clicked!');
-        console.log('Properties:', e.features[0].properties);
-        alert('Stop clicked! Check console for properties.');
-    });
-    
-    map.on('click', POLYGONS_LAYER, function(e) {
-        console.log('CensusTracts clicked!');
-        console.log('Properties:', e.features[0].properties);
-        alert('Census tract clicked! Check console for properties.');
-    });
-});
     
     // TRANSIT ROUTES
     map.on('mousemove', ROUTES_LAYER, function(e) {
