@@ -1,8 +1,8 @@
 ---
 layout: default
 title: Transit Map
-permalink: project/mapbox/
---- 
+permalink: /transit-map/
+---
 
 <div id="map" style="width: 100%; height: 600px;"></div>
 
@@ -12,87 +12,103 @@ permalink: project/mapbox/
 <script>
 mapboxgl.accessToken = 'pk.eyJ1IjoiamdvYmF0MTMiLCJhIjoiY21nMnVtcTh6MTQ4bDJrb2puczF6dWoyeCJ9.6hqHyL74X4bJhjYJXvo9WQ';
 
+
 const map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/jgobat13/cmidr44cy007r01r985yx1icu', // Your style URL with layers
-    center: [-122.3328 , 47.6061], // Adjust to your area
+    style: 'mapbox://styles/jgobat13/cmidr44cy007r01r985yx1icu',
+    center: [-122.3328, 47.6061],
     zoom: 10
 });
 
-// Wait for the map to load
-map.on('load', () => {
-    // Define your layer IDs
-    const ROUTES = 'TransitRoutes';
-    const STOPS = 'TransitStops';
-    const POLYGONS = 'CensusTracts';
+map.on('load', function() {
+    const ROUTES_LAYER = 'TransitRoutes';
+    const STOPS_LAYER = 'TransitStops';
+    const POLYGONS_LAYER = 'CensusTracts';
     
-
-    // TRANSIT ROUTES - Hover popup
-    map.on('mousemove', 'ROUTES', (e) => {
+    // TRANSIT ROUTES
+    map.on('mousemove', ROUTES_LAYER, function(e) {
         map.getCanvas().style.cursor = 'pointer';
         
-        const features = e.features[0].properties;
-         new mapboxgl.Popup({
+        const props = e.features[0].properties;
+        
+        const routeHTML = '<strong>Agency:</strong> ' + (props.agency_name || 'N/A') + '<br>' +
+                          '<strong>Route:</strong> ' + (props.route_long_name || 'N/A') + '<br>' +
+                          '<strong>Route Desc:</strong> ' + (props.route_desc || 'N/A') + '<br>' +
+                          '<strong>Route Line:</strong> ' + (props.route_short_name || 'N/A') + '<br>' +
+                          '<strong>URL:</strong> <a href="' + (props.route_url || '#') + '" target="_blank">More Info</a>';
+        
+        new mapboxgl.Popup({
             closeButton: false,
             closeOnClick: false
-         })
-
-        .setLngLat(e.lngLat)
-        .setHTML('
-            <strong>Agency:</strong> ${features.agency_name}<br>
-            <strong>Route:</strong> ${features.route_long_name}<br>
-            <strong>Route Line:</strong> ${features.route_short_name}</br>
-            <strong>Route Description:</strong> ${features.route_desc}</br>
-            <strong>URL:</strong> <a href="${features.route_url}" target="_blank">More Info</a>
-        ')
-        .addTo(map);
-    });
-    
-    map.on('mouseleave', 'ROUTES', () => {
-        map.getCanvas().style.cursor = '';
-    });
-    
-    // TRANSIT STOPS - Hover popup
-    map.on('mousemove', 'jgobat13.3sdsuv44', (e) => {
-        map.getCanvas().style.cursor = 'pointer';
-        
-        const features = e.features[0].properties;
-        
-        const popupContent = `
-            <strong>Stop ID:</strong> ${features.stop_id}<br>
-            <strong>Stop URL:</strong> ${features.stop_url}
-        `;
-        
-        new mapboxgl.Popup()
+        })
             .setLngLat(e.lngLat)
-            .setHTML(popupContent)
+            .setHTML(routeHTML)
             .addTo(map);
     });
     
-    map.on('mouseleave', 'jgobat13.3sdsuv44', () => {
+    map.on('mouseleave', ROUTES_LAYER, function() {
         map.getCanvas().style.cursor = '';
+        const popups = document.querySelectorAll('.mapboxgl-popup');
+        popups.forEach(function(popup) {
+            popup.remove();
+        });
     });
     
-    // DEMOGRAPHIC POLYGONS - Hover popup
-    map.on('mousemove', 'your-polygons-layer-id', (e) => {
+    // TRANSIT STOPS
+    map.on('mousemove', STOPS_LAYER, function(e) {
         map.getCanvas().style.cursor = 'pointer';
         
-        const features = e.features[0].properties;
-        // Adjust these property names to match your actual demographic data fields
-        const popupContent = `
-            <strong>Population:</strong> ${features.population}<br>
-            <strong>Median Income:</strong> $${features.median_income}<br>
-            <strong>Other Data:</strong> ${features.other_field}
-        `;
+        const props = e.features[0].properties;
+       
         
-        new mapboxgl.Popup()
+        const stopHTML = '<strong>Stop Name:</strong> ' + (props.stop_name || props.Stop_Name || 'N/A') + '<br>' 
+                         
+        
+        new mapboxgl.Popup({
+            closeButton: false,
+            closeOnClick: false
+        })
             .setLngLat(e.lngLat)
-            .setHTML(popupContent)
+            .setHTML(stopHTML)
             .addTo(map);
     });
     
-    map.on('mouseleave', 'your-polygons-layer-id', () => {
+    map.on('mouseleave', STOPS_LAYER, function() {
         map.getCanvas().style.cursor = '';
+        const popups = document.querySelectorAll('.mapboxgl-popup');
+        popups.forEach(function(popup) {
+            popup.remove();
+        });
+    });
+    
+    // DEMOGRAPHIC POLYGONS (Census Tracts)
+    map.on('mousemove', POLYGONS_LAYER, function(e) {
+        map.getCanvas().style.cursor = 'pointer';
+        
+        const props = e.features[0].properties;
+        
+  var censusHTML = '';
+    for (var key in props) {
+        if (props.hasOwnProperty(key)) {
+            censusHTML += '<strong>' + key + ':</strong> ' + props[key] + '<br>';
+        }
+    }
+        
+        new mapboxgl.Popup({
+            closeButton: false,
+            closeOnClick: false
+        })
+            .setLngLat(e.lngLat)
+            .setHTML(censusHTML)
+            .addTo(map);
+    });
+    
+    map.on('mouseleave', POLYGONS_LAYER, function() {
+        map.getCanvas().style.cursor = '';
+        const popups = document.querySelectorAll('.mapboxgl-popup');
+        popups.forEach(function(popup) {
+            popup.remove();
+        });
     });
 });
 </script>
