@@ -23,13 +23,15 @@ const map = new mapboxgl.Map({
 map.on('load', () => {
     
     // TRANSIT ROUTES - Hover popup
-    map.on('mousemove', 'your-routes-layer-id', (e) => {
+    map.on('mousemove', 'jgobat13.dnaltwuu', (e) => {
         map.getCanvas().style.cursor = 'pointer';
         
         const features = e.features[0].properties;
         const popupContent = `
             <strong>Agency:</strong> ${features.agency_name}<br>
-            <strong>Route:</strong> ${features.route_desc}<br>
+            <strong>Route:</strong> ${features.route_long_name}<br>
+            <strong>Route Line:</strong> ${features.route_short_name}</br>
+            <strong>Route Description:</strong> ${features.route_desc}</br>
             <strong>URL:</strong> <a href="${features.route_url}" target="_blank">More Info</a>
         `;
         
@@ -39,20 +41,19 @@ map.on('load', () => {
             .addTo(map);
     });
     
-    map.on('mouseleave', 'your-routes-layer-id', () => {
+    map.on('mouseleave', 'jgobat13.dnaltwuu', () => {
         map.getCanvas().style.cursor = '';
     });
     
     // TRANSIT STOPS - Hover popup
-    map.on('mousemove', 'your-stops-layer-id', (e) => {
+    map.on('mousemove', 'jgobat13.3sdsuv44', (e) => {
         map.getCanvas().style.cursor = 'pointer';
         
         const features = e.features[0].properties;
-        const wheelchairAccessible = features.wheelchair_boarding ? 'Yes' : 'No';
         
         const popupContent = `
             <strong>Stop ID:</strong> ${features.stop_id}<br>
-            <strong>Wheelchair Boarding:</strong> ${wheelchairAccessible}
+            <strong>Stop URL:</strong> ${features.stop_url}
         `;
         
         new mapboxgl.Popup()
@@ -61,7 +62,7 @@ map.on('load', () => {
             .addTo(map);
     });
     
-    map.on('mouseleave', 'your-stops-layer-id', () => {
+    map.on('mouseleave', 'jgobat13.3sdsuv44', () => {
         map.getCanvas().style.cursor = '';
     });
     
