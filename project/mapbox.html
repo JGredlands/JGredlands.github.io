@@ -3,8 +3,7 @@ layout: default
 title: Transit Map
 permalink: project/mapbox/
 --- 
-<div class="blurb"> 
-    <h2><a href="/project"> <-Back to Dashboard </a></h2>
+
 <div id="map" style="width: 100%; height: 600px;"></div>
 
 <link href='https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.css' rel='stylesheet' />
@@ -22,61 +21,34 @@ const map = new mapboxgl.Map({
 
 // Wait for the map to load
 map.on('load', () => {
-    console.log('Map loaded successfully');
+    // Define your layer IDs
+    const ROUTES = 'TransitRoutes';
+    const STOPS = 'TransitStops';
+    const POLYGONS = 'CensusTracts';
     
-    // Check if your layers exist
-    const style = map.getStyle();
-    console.log('All layers:', style.layers.map(layer => layer.id));
-    
-    // Check specific layers
-    const routesLayer = map.getLayer('TransitRoutes');
-    const stopsLayer = map.getLayer('TransitStops');
-    const polygonsLayer = map.getLayer('CensusTracts');
-    
-    console.log('Routes layer exists:', !!routesLayer);
-    console.log('Stops layer exists:', !!stopsLayer);
-    console.log('Polygons layer exists:', !!polygonsLayer);
 
-
-    map.on('load', () => {
-    
-    // TEST WITH CLICK - easier to debug
-    map.on('click', 'jgobat13.dnaltwuu', (e) => {
-        console.log('Route clicked!');
-        console.log('Feature properties:', e.features[0].properties);
-        
-        const features = e.features[0].properties;
-        const popupContent = `
-            <strong>Agency:</strong> ${features.agency_name}<br>
-            <strong>Route:</strong> ${features.route_desc}<br>
-            <strong>URL:</strong> <a href="${features.route_url}" target="_blank">More Info</a>
-        `;
-        
-        new mapboxgl.Popup()
-            .setLngLat(e.lngLat)
-            .setHTML(popupContent)
-            .addTo(map);
-    
     // TRANSIT ROUTES - Hover popup
-    map.on('mousemove', 'jgobat13.dnaltwuu', (e) => {
+    map.on('mousemove', 'ROUTES', (e) => {
         map.getCanvas().style.cursor = 'pointer';
         
         const features = e.features[0].properties;
-        const popupContent = `
+         new mapboxgl.Popup({
+            closeButton: false,
+            closeOnClick: false
+         })
+
+        .setLngLat(e.lngLat)
+        .setHTML('
             <strong>Agency:</strong> ${features.agency_name}<br>
             <strong>Route:</strong> ${features.route_long_name}<br>
             <strong>Route Line:</strong> ${features.route_short_name}</br>
             <strong>Route Description:</strong> ${features.route_desc}</br>
             <strong>URL:</strong> <a href="${features.route_url}" target="_blank">More Info</a>
-        `;
-        
-        new mapboxgl.Popup()
-            .setLngLat(e.lngLat)
-            .setHTML(popupContent)
-            .addTo(map);
+        `)
+        .addTo(map);
     });
     
-    map.on('mouseleave', 'jgobat13.dnaltwuu', () => {
+    map.on('mouseleave', 'ROUTES', () => {
         map.getCanvas().style.cursor = '';
     });
     
@@ -102,7 +74,7 @@ map.on('load', () => {
     });
     
     // DEMOGRAPHIC POLYGONS - Hover popup
-    map.on('mousemove', 'jgobat13.4fp8md9p', (e) => {
+    map.on('mousemove', 'your-polygons-layer-id', (e) => {
         map.getCanvas().style.cursor = 'pointer';
         
         const features = e.features[0].properties;
@@ -119,7 +91,7 @@ map.on('load', () => {
             .addTo(map);
     });
     
-    map.on('mouseleave', 'jgobat13.4fp8md9p', () => {
+    map.on('mouseleave', 'your-polygons-layer-id', () => {
         map.getCanvas().style.cursor = '';
     });
 });
