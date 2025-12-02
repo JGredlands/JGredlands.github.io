@@ -1,0 +1,90 @@
+---
+layout: default
+title: Transit Map
+permalink: project/mapbox/
+--- 
+
+<div id="map" style="width: 100%; height: 600px;"></div>
+
+<link href='https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.css' rel='stylesheet' />
+<script src='https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.js'></script>
+
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoiamdvYmF0MTMiLCJhIjoiY21nMnVtcTh6MTQ4bDJrb2puczF6dWoyeCJ9.6hqHyL74X4bJhjYJXvo9WQ';
+
+const map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/jgobat13/cmidr44cy007r01r985yx1icu', // Your style URL with layers
+    center: [-122.3328 , 47.6061], // Adjust to your area
+    zoom: 10
+});
+
+// Wait for the map to load
+map.on('load', () => {
+    
+    // TRANSIT ROUTES - Hover popup
+    map.on('mousemove', 'your-routes-layer-id', (e) => {
+        map.getCanvas().style.cursor = 'pointer';
+        
+        const features = e.features[0].properties;
+        const popupContent = `
+            <strong>Agency:</strong> ${features.agency_name}<br>
+            <strong>Route:</strong> ${features.route_desc}<br>
+            <strong>URL:</strong> <a href="${features.route_url}" target="_blank">More Info</a>
+        `;
+        
+        new mapboxgl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML(popupContent)
+            .addTo(map);
+    });
+    
+    map.on('mouseleave', 'your-routes-layer-id', () => {
+        map.getCanvas().style.cursor = '';
+    });
+    
+    // TRANSIT STOPS - Hover popup
+    map.on('mousemove', 'your-stops-layer-id', (e) => {
+        map.getCanvas().style.cursor = 'pointer';
+        
+        const features = e.features[0].properties;
+        const wheelchairAccessible = features.wheelchair_boarding ? 'Yes' : 'No';
+        
+        const popupContent = `
+            <strong>Stop ID:</strong> ${features.stop_id}<br>
+            <strong>Wheelchair Boarding:</strong> ${wheelchairAccessible}
+        `;
+        
+        new mapboxgl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML(popupContent)
+            .addTo(map);
+    });
+    
+    map.on('mouseleave', 'your-stops-layer-id', () => {
+        map.getCanvas().style.cursor = '';
+    });
+    
+    // DEMOGRAPHIC POLYGONS - Hover popup
+    map.on('mousemove', 'your-polygons-layer-id', (e) => {
+        map.getCanvas().style.cursor = 'pointer';
+        
+        const features = e.features[0].properties;
+        // Adjust these property names to match your actual demographic data fields
+        const popupContent = `
+            <strong>Population:</strong> ${features.population}<br>
+            <strong>Median Income:</strong> $${features.median_income}<br>
+            <strong>Other Data:</strong> ${features.other_field}
+        `;
+        
+        new mapboxgl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML(popupContent)
+            .addTo(map);
+    });
+    
+    map.on('mouseleave', 'your-polygons-layer-id', () => {
+        map.getCanvas().style.cursor = '';
+    });
+});
+</script>
