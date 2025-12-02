@@ -36,6 +36,27 @@ map.on('load', () => {
     console.log('Routes layer exists:', !!routesLayer);
     console.log('Stops layer exists:', !!stopsLayer);
     console.log('Polygons layer exists:', !!polygonsLayer);
+
+
+    map.on('load', () => {
+    
+    // TEST WITH CLICK - easier to debug
+    map.on('click', 'jgobat13.dnaltwuu', (e) => {
+        console.log('Route clicked!');
+        console.log('Feature properties:', e.features[0].properties);
+        
+        const features = e.features[0].properties;
+        const popupContent = `
+            <strong>Agency:</strong> ${features.agency_name}<br>
+            <strong>Route:</strong> ${features.route_desc}<br>
+            <strong>URL:</strong> <a href="${features.route_url}" target="_blank">More Info</a>
+        `;
+        
+        new mapboxgl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML(popupContent)
+            .addTo(map);
+    
     // TRANSIT ROUTES - Hover popup
     map.on('mousemove', 'jgobat13.dnaltwuu', (e) => {
         map.getCanvas().style.cursor = 'pointer';
@@ -81,7 +102,7 @@ map.on('load', () => {
     });
     
     // DEMOGRAPHIC POLYGONS - Hover popup
-    map.on('mousemove', 'your-polygons-layer-id', (e) => {
+    map.on('mousemove', 'jgobat13.4fp8md9p', (e) => {
         map.getCanvas().style.cursor = 'pointer';
         
         const features = e.features[0].properties;
@@ -98,7 +119,7 @@ map.on('load', () => {
             .addTo(map);
     });
     
-    map.on('mouseleave', 'your-polygons-layer-id', () => {
+    map.on('mouseleave', 'jgobat13.4fp8md9p', () => {
         map.getCanvas().style.cursor = '';
     });
 });
