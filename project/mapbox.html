@@ -122,8 +122,8 @@ map.on('load', function() {
     // Change cursor on hover
     map.on('mousemove', function(e) {
         var bbox = [
-            [e.point.x - 20, e.point.y - 20],
-            [e.point.x + 20, e.point.y + 20]
+            [e.point.x - 8, e.point.y - 8],
+            [e.point.x + 8, e.point.y + 8]
         ];
         
         var features = map.queryRenderedFeatures(bbox, {
