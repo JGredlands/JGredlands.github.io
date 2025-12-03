@@ -4,7 +4,16 @@ title: Transit Map
 permalink: project/mapbox/
 ---
 <div> <h3><a href="/project"> Back to Dashboard </a></h3> </div>
-<div id="map" style="width: 100%; height: 600px;"></div>
+<!-- Map Container -->
+<div id="map" style="width: 100%; height: 500px;"></div>
+
+<!-- Fixed Bottom Panel for Popups -->
+<div id="sidebar" style="width: 100%; height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 15px; background-color: #f9f9f9; margin-top: 10px;">
+    <h3>Feature Information</h3>
+    <p style="color: #666;">Click on a feature to see details</p>
+    <div id="feature-info"></div>
+</div>
+
 
 <link href='https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.css' rel='stylesheet' />
 <script src='https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.js'></script>
