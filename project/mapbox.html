@@ -35,28 +35,20 @@ var map = new mapboxgl.Map({
     
         var featureInfo = document.getElementById('feature-info');
     
-    // Change cursor on hover
-    map.on('mouseenter', ROUTES_LAYER, function() {
-        map.getCanvas().style.cursor = 'pointer';
     });
-    map.on('mouseleave', ROUTES_LAYER, function() {
-        map.getCanvas().style.cursor = '';
-    });
+    map.on('click', function(e) {
+    var bbox = [
+        [e.point.x - 15, e.point.y - 15],
+        [e.point.x + 15, e.point.y + 15]
+    ];
     
-    map.on('mouseenter', STOPS_LAYER, function() {
-        map.getCanvas().style.cursor = 'pointer';
-    });
-    map.on('mouseleave', STOPS_LAYER, function() {
-        map.getCanvas().style.cursor = '';
-    });
+    var allFeatures = map.queryRenderedFeatures(bbox);
     
-    map.on('mouseenter', POLYGONS_LAYER, function() {
-        map.getCanvas().style.cursor = 'pointer';
+    console.log('=== CLICK DEBUG ===');
+    console.log('Total features found:', allFeatures.length);
+    allFeatures.forEach(function(f, i) {
+        console.log('Feature ' + i + ':', f.layer.id);
     });
-    map.on('mouseleave', POLYGONS_LAYER, function() {
-        map.getCanvas().style.cursor = '';
-    });
-    
     // TRANSIT ROUTES - Click
     map.on('click', ROUTES_LAYER, function(e) {
         var props = e.features[0].properties;
