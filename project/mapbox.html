@@ -24,91 +24,78 @@ var map = new mapboxgl.Map({
     var STOPS_LAYER = 'countytransitstops-9twlwi';
     var POLYGONS_LAYER = 'demographicsmapbox-09rq1x';
     
-    // TRANSIT ROUTES
-    map.on('mousemove', ROUTES_LAYER, function(e) {
-        map.getCanvas().style.cursor = 'pointer';
-        
-        var props = e.features[0].properties;
-        
-        var routeHTML = '<strong>Agency:</strong> ' + (props.agency_name || 'N/A') + '<br>' +
-                          '<strong>Route:</strong> ' + (props.route_long_name || 'N/A') + '<br>' +
-                          '<strong>Route Desc:</strong> ' + (props.route_desc || 'N/A') + '<br>' +
-                          '<strong>Route Line:</strong> ' + (props.route_short_name || 'N/A') + '<br>' +
-                          '<strong>URL:</strong> <a href="' + (props.route_url || '#') + '" target="_blank">More Info</a>';
-        
-        new mapboxgl.Popup({
-            closeButton: false,
-            closeOnClick: false
-        })
-            .setLngLat(e.lngLat)
-            .setHTML(routeHTML)
-            .addTo(map);
-    });
+        var featureInfo = document.getElementById('feature-info');
     
+    // Change cursor on hover
+    map.on('mouseenter', ROUTES_LAYER, function() {
+        map.getCanvas().style.cursor = 'pointer';
+    });
     map.on('mouseleave', ROUTES_LAYER, function() {
         map.getCanvas().style.cursor = '';
-        var popups = document.querySelectorAll('.mapboxgl-popup');
-        popups.forEach(function(popup) {
-            popup.remove();
-        });
     });
     
-    // TRANSIT STOPS
-    map.on('mousemove', STOPS_LAYER, function(e) {
+    map.on('mouseenter', STOPS_LAYER, function() {
         map.getCanvas().style.cursor = 'pointer';
-        
-        var props = e.features[0].properties;
-       
-        
-        var stopHTML = '<strong>Stop Name:</strong> ' + (props.stop_name || props.Stop_Name || 'N/A') + '<br>';
-                         
-        
-        new mapboxgl.Popup({
-            closeButton: false,
-            closeOnClick: false
-        })
-            .setLngLat(e.lngLat)
-            .setHTML(stopHTML)
-            .addTo(map);
     });
-    
     map.on('mouseleave', STOPS_LAYER, function() {
         map.getCanvas().style.cursor = '';
-        var popups = document.querySelectorAll('.mapboxgl-popup');
-        popups.forEach(function(popup) {
-            popup.remove();
-        });
     });
     
-    // DEMOGRAPHIC POLYGONS (Census Tracts)
-    map.on('mousemove', POLYGONS_LAYER, function(e) {
+    map.on('mouseenter', POLYGONS_LAYER, function() {
         map.getCanvas().style.cursor = 'pointer';
-        
-        var props = e.features[0].properties;
-        
-  var censusHTML = '';
-    for (var key in props) {
-        if (props.hasOwnProperty(key)) {
-            censusHTML += '<strong>' + key + ':</strong> ' + props[key] + '<br>';
-        }
-    }
-        
-        new mapboxgl.Popup({
-            closeButton: false,
-            closeOnClick: false
-        })
-            .setLngLat(e.lngLat)
-            .setHTML(censusHTML)
-            .addTo(map);
     });
-    
     map.on('mouseleave', POLYGONS_LAYER, function() {
         map.getCanvas().style.cursor = '';
-        var popups = document.querySelectorAll('.mapboxgl-popup');
-        popups.forEach(function(popup) {
-            popup.remove();
-        });
     });
- });
     
+    // TRANSIT ROUTES - Click
+    map.on('click', ROUTES_LAYER, function(e) {
+        var props = e.features[0].properties;
+        
+        var routeHTML = '<div style="margin-top: 10px;">' +
+                        '<h4 style="margin-top: 0; color: #2c5282;">Transit Route</h4>' +
+                        '<strong>Agency:</strong> ' + (props.agency_name || 'N/A') + '<br>' +
+                        '<strong>Route:</strong> ' + (props.route_long_name || 'N/A') + '<br>' +
+                        '<strong>Route Desc:</strong> ' + (props.route_desc || 'N/A') + '<br>' +
+                        '<strong>Route Line:</strong> ' + (props.route_short_name || 'N/A') + '<br>';
+        
+        if (props.route_url) {
+            routeHTML += '<strong>URL:</strong> <a href="' + props.route_url + '" target="_blank">More Info</a><br>';
+        }
+        
+        routeHTML += '</div>';
+        
+        featureInfo.innerHTML = routeHTML;
+    });
+    
+    // TRANSIT STOPS - Click
+    map.on('click', STOPS_LAYER, function(e) {
+        var props = e.features[0].properties;
+        
+        var stopHTML = '<div style="margin-top: 10px;">' +
+                       '<h4 style="margin-top: 0; color: #2c5282;">Transit Stop</h4>' +
+                       '<strong>Stop Name:</strong> ' + (props.stop_name || props.Stop_Name || 'N/A') + '<br>' +
+                       '</div>';
+        
+        featureInfo.innerHTML = stopHTML;
+    });
+    
+    // DEMOGRAPHIC POLYGONS - Click
+    map.on('click', POLYGONS_LAYER, function(e) {
+        var props = e.features[0].properties;
+        
+        var censusHTML = '<div style="margin-top: 10px;">' +
+                        '<h4 style="margin-top: 0; color: #2c5282;">Census Tract</h4>';
+        
+        for (var key in props) {
+            if (props.hasOwnProperty(key)) {
+                censusHTML += '<strong>' + key + ':</strong> ' + props[key] + '<br>';
+            }
+        }
+        
+        censusHTML += '</div>';
+        
+        featureInfo.innerHTML = censusHTML;
+    });
+});
 </script>
