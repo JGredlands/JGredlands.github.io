@@ -28,7 +28,7 @@ var map = new mapboxgl.Map({
     zoom: 10
 });
 
- map.on('load', function() {
+map.on('load', function() {
     var ROUTES_LAYER = 'countytransitroutes-8xcf4w';
     var STOPS_LAYER = 'countytransitstops-9twlwi';
     var POLYGONS_LAYER = 'demographicsmapbox-09rq1x';
@@ -36,8 +36,15 @@ var map = new mapboxgl.Map({
     var featureInfo = document.getElementById('feature-info');
     
     // TRANSIT ROUTES - Click
-    map.on('click', ROUTES_LAYER, function(e) {
-        var props = e.features[0].properties;
+    map.on('click', function(event) {
+        var features = map.queryRenderedFeatures(event.point, {
+            layers: [ROUTES_LAYER]
+        });
+        if (!features.length) {
+            return;
+        }
+        var feature = features[0];
+        var props = feature.properties;
         
         var routeHTML = '<div style="margin-top: 10px;">' +
                         '<h4 style="margin-top: 0; color: #2c5282;">Transit Route</h4>' +
@@ -56,8 +63,15 @@ var map = new mapboxgl.Map({
     });
     
     // TRANSIT STOPS - Click
-    map.on('click', STOPS_LAYER, function(e) {
-        var props = e.features[0].properties;
+    map.on('click', function(event) {
+        var features = map.queryRenderedFeatures(event.point, {
+            layers: [STOPS_LAYER]
+        });
+        if (!features.length) {
+            return;
+        }
+        var feature = features[0];
+        var props = feature.properties;
         
         var stopHTML = '<div style="margin-top: 10px;">' +
                        '<h4 style="margin-top: 0; color: #2c5282;">Transit Stop</h4>' +
@@ -68,8 +82,15 @@ var map = new mapboxgl.Map({
     });
     
     // DEMOGRAPHIC POLYGONS - Click
-    map.on('click', POLYGONS_LAYER, function(e) {
-        var props = e.features[0].properties;
+    map.on('click', function(event) {
+        var features = map.queryRenderedFeatures(event.point, {
+            layers: [POLYGONS_LAYER]
+        });
+        if (!features.length) {
+            return;
+        }
+        var feature = features[0];
+        var props = feature.properties;
         
         var censusHTML = '<div style="margin-top: 10px;">' +
                         '<h4 style="margin-top: 0; color: #2c5282;">Census Tract</h4>';
