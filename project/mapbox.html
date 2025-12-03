@@ -33,22 +33,8 @@ var map = new mapboxgl.Map({
     var STOPS_LAYER = 'countytransitstops-9twlwi';
     var POLYGONS_LAYER = 'demographicsmapbox-09rq1x';
     
-        var featureInfo = document.getElementById('feature-info');
+    var featureInfo = document.getElementById('feature-info');
     
-    });
-    map.on('click', function(e) {
-    var bbox = [
-        [e.point.x - 15, e.point.y - 15],
-        [e.point.x + 15, e.point.y + 15]
-    ];
-    
-    var allFeatures = map.queryRenderedFeatures(bbox);
-    
-    console.log('=== CLICK DEBUG ===');
-    console.log('Total features found:', allFeatures.length);
-    allFeatures.forEach(function(f, i) {
-        console.log('Feature ' + i + ':', f.layer.id);
-    });
     // TRANSIT ROUTES - Click
     map.on('click', ROUTES_LAYER, function(e) {
         var props = e.features[0].properties;
